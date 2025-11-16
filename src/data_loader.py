@@ -40,6 +40,7 @@ class MFIFDataset(Dataset):
             )
 
     def __len__(self):
+        print("Length of dataset: ", len(self.image_names))
         return len(self.image_names)
 
     def __getitem__(self, idx):
