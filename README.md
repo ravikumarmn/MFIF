@@ -42,13 +42,13 @@ MFIF/
 ## Installation
 
 1. **Clone the repository** (if applicable) or ensure you're in the project directory
-
 2. **Install dependencies**:
+
    ```bash
    pip install -r requirements.txt
    ```
-
 3. **Verify setup**:
+
    ```bash
    python test_setup.py
    ```
@@ -56,8 +56,9 @@ MFIF/
 ## Dataset Structure
 
 The dataset should follow this structure:
+
 - `dataset/sourceA/`: Images with near focus
-- `dataset/sourceB/`: Images with far focus  
+- `dataset/sourceB/`: Images with far focus
 - `dataset/groundtruth/`: All-focus ground truth images
 
 Each image triplet should have the same filename (e.g., `2007_000032_1.jpg`).
@@ -67,11 +68,13 @@ Each image triplet should have the same filename (e.g., `2007_000032_1.jpg`).
 ### Training
 
 Basic training with default parameters:
+
 ```bash
 python src/train.py
 ```
 
 Training with custom parameters:
+
 ```bash
 python src/train.py --batch_size 8 --num_epochs 200 --learning_rate 0.0005
 ```
@@ -79,6 +82,7 @@ python src/train.py --batch_size 8 --num_epochs 200 --learning_rate 0.0005
 ### Inference
 
 Single image fusion:
+
 ```bash
 python src/inference.py \
     --checkpoint checkpoints/best_model.pth \
@@ -87,10 +91,8 @@ python src/inference.py \
     --output results/fused_result.jpg
 ```
 
-
-
-
 Batch processing:
+
 ```bash
 python src/inference.py \
     --checkpoint checkpoints/best_model.pth \
@@ -99,27 +101,23 @@ python src/inference.py \
     --output_dir results/
 ```
 
-### Monitoring Training
-
-View training progress with tensorboard:
-```bash
-tensorboard --logdir logs
-```
-
 ## Model Architecture
 
 ### Siamese Encoder
+
 - Shared encoder for both input images
 - GenClean Block for initial denoising
 - Multi-scale feature extraction (64, 128, 256, 512 channels)
 - Skip connections for better gradient flow
 
 ### Attention Fusion
+
 - Channel-wise attention at each feature level
 - Learnable fusion weights between source images
 - Multi-scale fusion from coarse to fine features
 
 ### Decoder
+
 - Progressive upsampling with skip connections
 - Feature fusion at multiple scales
 - Final output with Tanh activation
@@ -127,6 +125,7 @@ tensorboard --logdir logs
 ## Training Configuration
 
 Default training parameters:
+
 - **Batch Size**: 8
 - **Image Size**: 256×256
 - **Learning Rate**: 0.0005
@@ -143,21 +142,22 @@ Default training parameters:
 ## Future Enhancements
 
 1. **Advanced Attention Mechanisms**
+
    - Implement DFEB (Deep Feature Extraction Block)
    - Add DCA (Dynamic Channel Adjustment)
    - Multi-scale dilated attention
-
 2. **GAN Integration**
+
    - PatchGAN discriminator
    - Adversarial loss for perceptual realism
    - Enhanced texture preservation
-
 3. **Advanced Loss Functions**
+
    - VGG perceptual loss
    - Feature matching loss
    - Gradient-based losses
-
 4. **Performance Optimizations**
+
    - Model pruning and quantization
    - TensorRT optimization
    - Multi-GPU training support
@@ -172,6 +172,7 @@ Default training parameters:
 ## Contributing
 
 This is an implementation. Future contributions should focus on:
+
 - Adding advanced attention mechanisms
 - Implementing GAN-based training
 - Improving evaluation metrics
