@@ -76,11 +76,6 @@ def create_data_loaders(
     num_workers=4,
     max_samples=None,
 ):
-    """Create train and validation data loaders
-
-    Args:
-        max_samples: If specified, limit the dataset to this many samples for faster training
-    """
 
     dataset = MFIFDataset(
         source_a_dir, source_b_dir, ground_truth_dir, image_size=image_size
