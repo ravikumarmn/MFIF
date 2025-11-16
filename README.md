@@ -1,4 +1,4 @@
-# Multi-Focus Image Fusion (MFIF) - Phase 1
+# Multi-Focus Image Fusion (MFIF)
 
 A PyTorch implementation of Multi-Focus Image Fusion using Siamese Networks with attention mechanisms.
 
@@ -140,23 +140,7 @@ Default training parameters:
 - **PSNR**: Peak Signal-to-Noise Ratio
 - **L1 Loss**: Mean Absolute Error
 
-## Phase 1 Limitations
-
-This Phase 1 implementation includes:
-- ✅ Basic Siamese encoder-decoder architecture
-- ✅ GenClean Block for denoising
-- ✅ Simple attention-based fusion
-- ✅ L1 + SSIM loss training
-- ✅ Basic evaluation metrics
-
-Not included in Phase 1 (for future phases):
-- ❌ Deep Feature Extraction Block (DFEB)
-- ❌ Dynamic Channel Adjustment (DCA)
-- ❌ GAN discriminator and adversarial training
-- ❌ Advanced multi-scale attention mechanisms
-- ❌ Perceptual loss (VGG-based)
-
-## Future Enhancements (Phase 2+)
+## Future Enhancements
 
 1. **Advanced Attention Mechanisms**
    - Implement DFEB (Deep Feature Extraction Block)
@@ -187,7 +171,7 @@ Not included in Phase 1 (for future phases):
 
 ## Contributing
 
-This is a Phase 1 implementation. Future contributions should focus on:
+This is an implementation. Future contributions should focus on:
 - Adding advanced attention mechanisms
 - Implementing GAN-based training
 - Improving evaluation metrics
