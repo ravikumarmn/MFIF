@@ -27,6 +27,7 @@ from metrics import (
     calculate_ssim,
     calculate_psnr,
 )
+from plot_utils import TrainingPlotter
 
 
 def get_optimal_device():
@@ -45,6 +46,9 @@ class PaperExactTrainer:
     def __init__(self, config):
         self.config = config
         self.device = get_optimal_device()
+
+        # Initialize plotting system
+        self.plotter = TrainingPlotter(results_dir=config.get("results_dir", "results"))
 
         # Initialize model
         self.model = SiameseMFIFGAN(in_channels=3, out_channels=3).to(self.device)
@@ -85,6 +89,7 @@ class PaperExactTrainer:
         # Training state
         self.epoch = 0
         self.best_metrics = {"qnmi": 0, "qg": 0, "qcb": 0, "qpiella": 0, "ssim": 0}
+        self.best_epoch = 0
 
         print(f"✅ Trainer initialized on device: {self.device}")
         print(
@@ -287,10 +292,30 @@ class PaperExactTrainer:
             is_best = current_score > best_score
             if is_best:
                 self.best_metrics = val_metrics.copy()
+                self.best_epoch = epoch + 1
+
+            # Update plotting data
+            self.plotter.update_metrics(
+                epoch=epoch,
+                train_metrics=train_metrics,
+                val_metrics=val_metrics,
+                lr_g=self.optimizer_G.param_groups[0]["lr"],
+                lr_d=self.optimizer_D.param_groups[0]["lr"],
+                epoch_time=time.time() - start_time,
+            )
 
             # Save checkpoint
             if (epoch + 1) % 10 == 0 or is_best:
                 self.save_checkpoint(epoch, val_metrics, is_best)
+
+            # Generate plots periodically and at the end
+            if (
+                (epoch + 1) % 20 == 0
+                or epoch == self.config["num_epochs"] - 1
+                or is_best
+            ):
+                print("📊 Generating training plots...")
+                self.plotter.generate_all_plots()
 
             # Print epoch summary
             epoch_time = time.time() - start_time
@@ -325,9 +350,26 @@ class PaperExactTrainer:
             print("-" * 80)
 
         print("🎉 Training completed!")
-        print(f"🏆 Best metrics achieved:")
+        print(f"🏆 Best metrics achieved at epoch {self.best_epoch}:")
         for metric, value in self.best_metrics.items():
             print(f"   • {metric.upper()}: {value:.4f}")
+
+        # Generate final comprehensive plots
+        print("\n📊 Generating final comprehensive training analysis...")
+        self.plotter.generate_all_plots()
+        self.plotter.plot_final_summary(self.best_metrics)
+
+        print(
+            f"\n✅ All training graphs and metrics saved to: {self.plotter.plots_dir}"
+        )
+        print("📊 Generated files:")
+        print("   • training_losses.png - Detailed loss analysis")
+        print("   • validation_metrics.png - Paper evaluation metrics")
+        print("   • learning_rates_and_time.png - LR schedules and timing")
+        print("   • comprehensive_overview.png - Complete training overview")
+        print("   • training_summary.png - Final summary with best metrics")
+        print("   • training_metrics.csv - All metrics in CSV format")
+        print("   • training_metrics.json - All metrics in JSON format")
 
 
 def main():
@@ -380,11 +422,18 @@ def main():
     parser.add_argument(
         "--checkpoint_dir", type=str, default="checkpoints", help="Checkpoint directory"
     )
+    parser.add_argument(
+        "--results_dir",
+        type=str,
+        default="results",
+        help="Results directory for plots and metrics",
+    )
 
     args = parser.parse_args()
 
     # Create directories
     os.makedirs(args.checkpoint_dir, exist_ok=True)
+    os.makedirs(args.results_dir, exist_ok=True)
 
     # Configuration
     config = {
@@ -397,6 +446,7 @@ def main():
         "learning_rate": args.learning_rate,
         "max_samples": args.max_samples,
         "checkpoint_dir": args.checkpoint_dir,
+        "results_dir": args.results_dir,
     }
 
     print("🔬 EXACT Paper Implementation - Multi-Focus Image Fusion")
